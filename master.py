@@ -1,3 +1,4 @@
+#integration between realsense and mediapipe 
 import pyrealsense2 as rs
 import mediapipe as mp
 import cv2
