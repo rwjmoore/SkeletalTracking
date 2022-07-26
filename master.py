@@ -28,7 +28,9 @@ background_removed_color = 153 # Grey
 mpHands = mp.solutions.hands
 hands = mpHands.Hands()
 mpDraw = mp.solutions.drawing_utils
-
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose(min_detection_confidence = 0.1, min_tracking_confidence = 0.1,model_complexity = 1, smooth_landmarks = True )
 # ====== Enable Streams ======
 config.enable_device(device)
 # # For worse FPS, but better resolution:
@@ -105,12 +107,24 @@ while True:
                 y = len(depth_image_flipped) - 1
             mfk_distance = depth_image_flipped[y,x] * depth_scale # meters
             mfk_distance_feet = mfk_distance * 3.281 # feet
+
+            #adding in full skeletal tracking 
+            body_results = pose.process(images)
+            mpDraw.draw_landmarks(images,body_results.pose_landmarks,mp_pose.POSE_CONNECTIONS,landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+
+
+
+
             images = cv2.putText(images, f"{hand_side} Hand Distance: {mfk_distance_feet:0.3} feet ({mfk_distance:0.3} m) away", org2, font, fontScale, color, thickness, cv2.LINE_AA)
             i+=1
             images = cv2.putText(images, f"Hands: {number_of_hands}", org, font, fontScale, color, thickness, cv2.LINE_AA)
     else:
         images = cv2.putText(images,"No Hands", org, font, fontScale, color, thickness, cv2.LINE_AA)
     
+
+  
+
+
     # Display FPS
     time_diff = dt.datetime.today().timestamp() - start_time
     fps = int(1 / time_diff)
