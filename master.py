@@ -69,6 +69,7 @@ while True:
     if not aligned_depth_frame or not color_frame:
         print('not aligned')
         continue
+    
 
     # Process images
     depth_image = np.asanyarray(aligned_depth_frame.get_data())
