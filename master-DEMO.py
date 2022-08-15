@@ -79,7 +79,8 @@ while True:
     color_image = np.asanyarray(color_frame.get_data())
     #since depth image is single channel and colour image is three we stack the depth image on itself three times
     depth_image_3d = np.dstack((depth_image,depth_image,depth_image))
-    background_removed = np.where((depth_image_3d > clipping_distance) | (depth_image_3d <= 0), background_removed_color, color_image)
+    #background_removed = np.where((depth_image_3d > clipping_distance) | (depth_image_3d <= 0), background_removed_color, color_image)
+    background_removed = color_image
 
     #format images for Mediapipe
     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
@@ -108,7 +109,10 @@ while True:
             mfk_distance = depth_image_flipped[y,x] * depth_scale # meters
             mfk_distance_feet = mfk_distance * 3.281 # feet
 
-            
+            #adding in full skeletal tracking 
+            body_results = pose.process(images)
+            mpDraw.draw_landmarks(images,body_results.pose_landmarks,mp_pose.POSE_CONNECTIONS,landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+
 
 
 
@@ -142,3 +146,7 @@ print(f"Exiting loop for SN: {device}")
 print(f"Application Closing.")
 pipeline.stop()
 print(f"Application Closed.")
+
+
+
+#plot the data for mediapipe
