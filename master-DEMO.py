@@ -4,7 +4,7 @@ import mediapipe as mp
 import cv2
 import numpy as np
 import datetime as dt
-
+import time as time
 #openCV window formatting
 font = cv2.FONT_HERSHEY_SIMPLEX
 org = (20, 100)
@@ -64,7 +64,14 @@ print(f"\tConfiguration Successful for SN {device}")
 while True:
     start_time = dt.datetime.today().timestamp() # Necessary for FPS calculations
     # Get and align frames
-    frames = pipeline.wait_for_frames()
+    try:
+        frames = pipeline.wait_for_frames(timeout_ms=2000)
+    except RuntimeError:
+        print("Timeout – resetting pipeline")
+        pipeline.stop()
+        time.sleep(0.5)
+        pipeline.start(config)
+        continue    
     aligned_frames = align.process(frames)
     aligned_depth_frame = aligned_frames.get_depth_frame()
     color_frame = aligned_frames.get_color_frame()

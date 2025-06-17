@@ -187,6 +187,10 @@ class GUI:
         self.writer1= cv2.VideoWriter('RecordedVideo.mp4', cv2.VideoWriter_fourcc(*'XVID'), 20, (480,640))
 
 
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('output.avi', fourcc, 30.0, (480, 640))
+
+
         # ====== Configure Realsense Environment ======
         realsense_ctx = rs.context()
         connected_devices = [] # List of serial numbers for present cameras
